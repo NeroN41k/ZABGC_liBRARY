@@ -18,7 +18,7 @@
       </li>
       <li class="flex items-center gap-3 text-gray-500 hover:text-black cursor-pointer">
         <img src="/profile.svg" alt="Favorite" />
-        <span>Профиль.</span>
+        <span>Профиль</span>
       </li>
     </ul>
   </header>
