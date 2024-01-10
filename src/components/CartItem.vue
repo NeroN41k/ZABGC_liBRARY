@@ -1,0 +1,17 @@
+<template>
+  <div class="flex border border-slate-200 p-4 rounded-xl gap-4">
+    <img class="w-16 h-16" src="/book-cart.svg" alt="Book" />
+
+    <div class="flex flex-col">
+      <p>Над пропастью во ржи</p>
+
+      <div class="flex justify-between mt-2">
+        <p class="text-slate-400">Джером Д. Сэлинджер</p>
+        <img
+          class="opacity-40 hover:opacity-100 cursor-pointer transition ml-1 w-8 h-8"
+          src="/close.svg"
+        />
+      </div>
+    </div>
+  </div>
+</template>
