@@ -1,14 +1,98 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, reactive, ref, provide, watch } from 'vue'
 import axios from 'axios'
 
 import Header from './components/Header.vue'
 import CardList from './components/CardList.vue'
 import Drawer from './components/Drawer.vue'
 
-onMounted(() => {
-  axios.get('').then((resp) => console.log(resp.data))
+const items = ref([])
+
+const filters = reactive({
+  sortBy: 'title',
+  searchQuery: ''
 })
+
+const onChangeSelect = (event) => {
+  filters.sortBy = event.target.value
+}
+
+const onChangeSearchInput = (event) => {
+  filters.searchQuery = event.target.value
+}
+
+const fetchFavorites = async () => {
+  try {
+    const { data: favorites } = await axios.get(`https://9f6b75bab8c0eb87.mokky.dev/favorites`)
+
+    items.value = items.value.map((item) => {
+      const favorite = favorites.find((favorite) => favorite.bookId === item.id)
+
+      if (!favorite) {
+        return item
+      }
+
+      return {
+        ...item,
+        isFavorite: true,
+        favoriteId: favorite.Id
+      }
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+const addToFavorite = async (item) => {
+  try {
+    if (!item.isFavorite) {
+      const obj = {
+        bookId: item.id
+      }
+      item.isFavorite = true
+      const { data } = await axios.post(`https://9f6b75bab8c0eb87.mokky.dev/favorites`, obj)
+      item.favoriteId = data.id
+    } else {
+      await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/favorites/${item.favoriteId}`)
+      item.isFavorite = false
+      item.favoriteId = null
+    }
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+const fetchItems = async () => {
+  try {
+    const params = {
+      sortBy: filters.sortBy
+    }
+
+    if (filters.searchQuery) {
+      params.title = `*${filters.searchQuery}*`
+    }
+
+    const { data } = await axios.get(`https://9f6b75bab8c0eb87.mokky.dev/books`, {
+      params
+    })
+    items.value = data.map((obj) => ({
+      ...obj,
+      isFavorite: false,
+      favoriteId: null,
+      isAdded: false
+    }))
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+onMounted(async () => {
+  await fetchItems()
+  await fetchFavorites()
+})
+watch(filters, fetchItems)
+
+provide('addToFavorite', addToFavorite)
 </script>
 
 <template>
@@ -21,13 +105,14 @@ onMounted(() => {
         <h2 class="text-3xl font-bold mb-8">Все книги</h2>
 
         <div class="flex gap-4">
-          <!--<select class="py-2 px-3 border rounded-md outline-none">
-            <option>По названию</option>
-          </select> хуй знает зачем здесь сортировка💩 -->
+          <select @change="onChangeSelect" class="py-2 px-3 border rounded-md outline-none">
+            <option value="name">По названию</option>
+          </select>
 
           <div class="relative">
             <img class="absolute left-3 top-3" src="/search.svg" alt="Search" />
             <input
+              @input="onChangeSearchInput"
               class="border rounded-md py-2 pl-11 pr-4 outline-none focus:border-gray-400"
               type="text"
               placeholder="Поиск..."
@@ -37,7 +122,7 @@ onMounted(() => {
       </div>
 
       <div class="mt-10">
-        <CardList />
+        <CardList :items="items" @addToFavorite="addToFavorite" />
       </div>
     </div>
   </div>
