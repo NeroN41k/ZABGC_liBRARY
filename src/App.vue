@@ -7,11 +7,32 @@ import CardList from './components/CardList.vue'
 import Drawer from './components/Drawer.vue'
 
 const items = ref([])
+const bookCartItems = ref([])
+const drawerOpen = ref(false)
+
+const openDrawer = () => {
+  drawerOpen.value = true
+}
+
+const closeDrawer = () => {
+  drawerOpen.value = false
+}
 
 const filters = reactive({
   sortBy: 'title',
   searchQuery: ''
 })
+
+const addToCart = (item) => {
+  if (!item.isAdded) {
+    item.isAdded = true
+    bookCartItems.value.push(item)
+  } else {
+    item.isAdded = false
+    bookCartItems.value.splice(bookCartItems.value.indexOf(item), 1)
+  }
+  console.log(bookCartItems)
+}
 
 const onChangeSelect = (event) => {
   filters.sortBy = event.target.value
@@ -35,7 +56,7 @@ const fetchFavorites = async () => {
       return {
         ...item,
         isFavorite: true,
-        favoriteId: favorite.Id
+        favoriteId: favorite.id
       }
     })
   } catch (err) {
@@ -53,8 +74,8 @@ const addToFavorite = async (item) => {
       const { data } = await axios.post(`https://9f6b75bab8c0eb87.mokky.dev/favorites`, obj)
       item.favoriteId = data.id
     } else {
-      await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/favorites/${item.favoriteId}`)
       item.isFavorite = false
+      await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/favorites/${item.favoriteId}`)
       item.favoriteId = null
     }
   } catch (err) {
@@ -92,13 +113,17 @@ onMounted(async () => {
 })
 watch(filters, fetchItems)
 
-provide('addToFavorite', addToFavorite)
+provide('drawer', {
+  bookCartItems,
+  openDrawer,
+  closeDrawer
+});
 </script>
 
 <template>
-  <!--<Drawer /> -->
+  <Drawer v-if="drawerOpen"/> 
   <div class="bg-white w-3/5 m-auto rounded-xl shadow-xl shadow-grey-200 mt-10 mb-5">
-    <Header />
+    <Header @open-drawer="openDrawer" />
 
     <div class="p-10">
       <div class="flex justify-between items-center">
@@ -122,7 +147,7 @@ provide('addToFavorite', addToFavorite)
       </div>
 
       <div class="mt-10">
-        <CardList :items="items" @addToFavorite="addToFavorite" />
+        <CardList :items="items" @add-to-favorite="addToFavorite" @add-to-cart="addToCart"/>
       </div>
     </div>
   </div>
