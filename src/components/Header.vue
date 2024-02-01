@@ -1,7 +1,9 @@
 <script setup>
+defineProps({
+  totalCountCart: Number
+})
+
   const emit = defineEmits(['openDrawer']);
-
-
 </script>
 
 <template>
@@ -16,7 +18,7 @@
     <ul class="flex items-center gap-6">
       <li @click="() => emit('openDrawer')" class="flex items-center gap-3 text-gray-500 hover:text-black cursor-pointer">
         <img src="/book.svg" alt="Book" />
-        <b>Выбрано 3</b>
+        <b>Выбрано {{ totalCountCart }}</b>
       </li>
       <li class="flex items-center gap-3 text-gray-500 hover:text-black cursor-pointer">
         <img src="/heart.svg" alt="Favorite" />
