@@ -7,7 +7,9 @@ defineProps ({
 </script>
 
 <template>
-    <img height="70" width="70" :src="imageUrl" alt="InfoImage"/>
-    <h2 class="mt-4 text-2xl font-medium">{{ title }}</h2>
-    <p>{{ description }}</p>
+    <div class="flex flex-col text-center w-72 mx-auto items-center">
+        <img height="80" width="80" :src="imageUrl" alt="InfoImage"/>
+        <h2 class="mt-4 text-2xl font-medium">{{ title }}</h2>
+        <p class="text-gray-400 mt-2">{{ description }}</p>
+    </div>
 </template>
