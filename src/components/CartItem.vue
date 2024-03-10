@@ -1,13 +1,12 @@
 <script setup>
-const emit = defineEmits(['onCLickRemove'])
+const emit = defineEmits(['onClickRemove'])
 
 defineProps({
   id: Number,
   title: String,
   author: String,
   imageUrl: String
-});
-
+})
 </script>
 
 <template>
@@ -19,7 +18,10 @@ defineProps({
 
       <div class="flex justify-between mt-2">
         <p class="text-slate-400 flex-1">{{ author }}</p>
-        <img @click="emit('onClickRemove')" class="opacity-40 hover:opacity-100 cursor-pointer transition ml-1 w-8 h-8" src="/close.svg"
+        <img
+          @click="emit('onClickRemove')"
+          class="opacity-40 hover:opacity-100 cursor-pointer transition ml-1 w-8 h-8"
+          src="/close.svg"
         />
       </div>
     </div>

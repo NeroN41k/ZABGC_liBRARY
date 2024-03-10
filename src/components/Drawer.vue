@@ -58,7 +58,7 @@ const buttonDisabled = computed(() => isCreating.value || cartIsEmpty.value)
     </div>
 
     <div v-else>
-      <CartItemList />
+      <CartItemList v-auto-animate />
 
       <div class="flex flex-col gap-4 mt-7">
         <div class="flex gap-2">

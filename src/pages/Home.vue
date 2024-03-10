@@ -85,10 +85,13 @@ const fetchItems = async () => {
     const { data } = await axios.get(`https://9f6b75bab8c0eb87.mokky.dev/books`, {
       params
     })
+
+    const { data: favorites } = await axios.get(`https://9f6b75bab8c0eb87.mokky.dev/favorites`)
+
     items.value = data.map((obj) => ({
       ...obj,
-      isFavorite: false,
-      favoriteId: null,
+      isFavorite: favorites.map((f) => f.book_id).includes(obj.id),
+      favoriteId: favorites.map((f) => f.book_id).includes(obj.id) ? obj.id : null,
       isAdded: false
     }))
   } catch (err) {
