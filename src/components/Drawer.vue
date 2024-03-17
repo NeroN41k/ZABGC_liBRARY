@@ -1,6 +1,6 @@
 <script setup>
 import axios from 'axios'
-import { ref, watch, computed, inject } from 'vue'
+import { ref, computed, inject } from 'vue'
 
 import DrawerHeader from './DrawerHeader.vue'
 import CartItemList from './CartItemList.vue'
@@ -10,7 +10,7 @@ const props = defineProps({
   totalCountCart: Number
 })
 
-const { bookCartItems, closeDrawer } = inject('drawer')
+const { bookCartItems } = inject('drawer')
 
 const isCreating = ref(false)
 const orderId = ref(null)

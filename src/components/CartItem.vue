@@ -1,5 +1,5 @@
 <script setup>
-const emit = defineEmits(['onClickRemove'])
+const emit = defineEmits(['addToCart'])
 
 defineProps({
   id: Number,
@@ -19,7 +19,7 @@ defineProps({
       <div class="flex justify-between mt-2">
         <p class="text-slate-400 flex-1">{{ author }}</p>
         <img
-          @click="emit('onClickRemove')"
+          @click="emit('addToCart')"
           class="opacity-40 hover:opacity-100 cursor-pointer transition ml-1 w-8 h-8"
           src="/close.svg"
         />

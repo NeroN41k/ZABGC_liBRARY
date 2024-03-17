@@ -5,7 +5,7 @@ import debounce from 'lodash.debounce'
 
 import CardList from '../components/CardList.vue'
 
-const { bookCartItems, addToCart, removeFromCart } = inject('drawer')
+const { bookCartItems, addToCart } = inject('drawer')
 
 const items = ref([])
 
@@ -14,14 +14,14 @@ const filters = reactive({
   searchQuery: ''
 })
 
-const onClickAddPlus = (item) => {
-  if (!item.isAdded) {
-    addToCart(item)
-  } else {
-    removeFromCart(item)
-  }
-  console.log(bookCartItems)
-}
+//const onClickAddPlus = (item) => {
+//if (!item.isAdded) {
+// addToCart(item)
+// } else {
+// removeFromCart(item)
+//}
+//console.log(bookCartItems)
+//}
 
 const onChangeSelect = (event) => {
   filters.sortBy = event.target.value
@@ -87,12 +87,13 @@ const fetchItems = async () => {
     })
 
     const { data: favorites } = await axios.get(`https://9f6b75bab8c0eb87.mokky.dev/favorites`)
+    const { data: cart } = await axios.get(`https://9f6b75bab8c0eb87.mokky.dev/cart`)
 
     items.value = data.map((obj) => ({
       ...obj,
       isFavorite: favorites.map((f) => f.book_id).includes(obj.id),
       favoriteId: favorites.map((f) => f.book_id).includes(obj.id) ? obj.id : null,
-      isAdded: false
+      isAdded: cart.map((f) => f.book_id).includes(obj.id)
     }))
   } catch (err) {
     console.log(err)
@@ -143,6 +144,6 @@ watch(filters, fetchItems)
   </div>
 
   <div class="mt-10">
-    <CardList :items="items" @add-to-favorite="addToFavorite" @add-to-cart="onClickAddPlus" />
+    <CardList :items="items" @add-to-favorite="addToFavorite" @add-to-cart="addToCart" />
   </div>
 </template>
