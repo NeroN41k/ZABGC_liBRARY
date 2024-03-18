@@ -1,6 +1,5 @@
 <script setup>
 import { ref, provide, watch, computed } from 'vue'
-
 import Header from './components/Header.vue'
 import Drawer from './components/Drawer.vue'
 import axios from 'axios'
@@ -9,7 +8,7 @@ import axios from 'axios'
 const bookCartItems = ref([])
 const drawerOpen = ref(false)
 
-const totalCountCart = computed(() => bookCartItems.value.reduce((acc) => acc + 1, 0))
+const totalCountCart = computed(() => bookCartItems.value.length)
 
 const openDrawer = () => {
   drawerOpen.value = true
@@ -21,36 +20,38 @@ const closeDrawer = () => {
 
 const addToCart = async (item) => {
   try {
+    const apiUrl = 'https://9f6b75bab8c0eb87.mokky.dev/cart';
+    
     if (!item.isAdded) {
       const obj = {
-        bookIdAdded: item.id
-      }
-      item.isAdded = true
-      bookCartItems.value.push(item)
-      const { data } = await axios.post(`https://9f6b75bab8c0eb87.mokky.dev/cart`, obj)
-      item.bookIdAdded = data.id
+        book_id: item.id
+      };
+      
+      item.isAdded = true;
+      bookCartItems.value.push(item);
+
+      const { data } = await axios.post(apiUrl, obj);
+      item.book_id = data.id;
     } else {
-      item.isAdded = false
-      bookCartItems.value.splice(bookCartItems.value.indexOf(item), 1)
-      await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/cart/${item.bookIdAdded}`)
-      item.bookIdAdded = null
+      item.isAdded = false;
+      const index = bookCartItems.value.indexOf(item);
+      bookCartItems.value.splice(index, 1);
+
+      await axios.delete(`${apiUrl}/${item.book_id}`);
+      item.book_id = null;
     }
   } catch (err) {
-    console.log(err)
+    console.log(err);
   }
 }
 
-//const addToCart = (item) => {
-//item.isAdded = true
-//bookCartItems.value.push(item)
-//}
-
 const removeFromCart = async (item) => {
   try {
-  item.isAdded = false
-  bookCartItems.value.splice(bookCartItems.value.indexOf(item), 1)
-  await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/cart/${item.bookIdAdded}`)
-  item.bookIdAdded = null
+    item.isAdded = false
+    const index = bookCartItems.value.indexOf(item)
+    bookCartItems.value.splice(index, 1)
+    await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/cart/${item.book_id}`)
+    item.book_id = null
   } catch (err) {
     console.log(err)
   }

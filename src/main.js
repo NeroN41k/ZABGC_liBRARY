@@ -22,7 +22,4 @@ const router = createRouter({
   routes
 })
 
-app.use(router)
-app.use(autoAnimatePlugin)
-
-app.mount('#app')
+app.use(router).use(autoAnimatePlugin).mount('#app')

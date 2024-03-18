@@ -26,8 +26,11 @@ const createOrder = async () => {
     bookCartItems.value = []
 
     orderId.value = data.id
+
+    await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/cart`)
   } catch (err) {
     console.log(err)
+    isCreating.value = false
   } finally {
     isCreating.value = false
   }

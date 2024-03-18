@@ -33,26 +33,27 @@ const onChangeSearchInput = debounce((event) => {
 
 const addToFavorite = async (item) => {
   try {
-    if (!item.isFavorite) {
-      const obj = {
-        book_id: item.id
-      }
-      item.isFavorite = true
-      const { data } = await axios.post(`https://9f6b75bab8c0eb87.mokky.dev/favorites`, obj)
-      item.favoriteId = data.id
+    const obj = {
+      book_id: item.id
+    };
+    item.isFavorite = !item.isFavorite;
+    
+    if (item.isFavorite) {
+      const { data } = await axios.post(`https://9f6b75bab8c0eb87.mokky.dev/favorites`, obj);
+      item.favoriteId = data.id;
     } else {
-      item.isFavorite = false
-      await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/favorites/${item.favoriteId}`)
-      item.favoriteId = null
+      await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/favorites/${item.favoriteId}`);
+      item.favoriteId = null;
     }
   } catch (err) {
-    console.log(err)
+    console.log(err);
   }
-}
+};
 
 const fetchFavorites = async () => {
   try {
-    const { data: favorites } = await axios.get(`https://9f6b75bab8c0eb87.mokky.dev/favorites`)
+    const response = await axios.get(`https://9f6b75bab8c0eb87.mokky.dev/favorites`)
+    const favorites = response.data
 
     items.value = items.value.map((item) => {
       const favorite = favorites.find((favorite) => favorite.book_id === item.id)
@@ -67,8 +68,8 @@ const fetchFavorites = async () => {
         favoriteId: favorite.id
       }
     })
-  } catch (err) {
-    console.log(err)
+  } catch (error) {
+    console.log(error)
   }
 }
 
@@ -82,19 +83,22 @@ const fetchItems = async () => {
       params.title = `*${filters.searchQuery}*`
     }
 
-    const { data } = await axios.get(`https://9f6b75bab8c0eb87.mokky.dev/books`, {
-      params
-    })
+    const [booksRes, favoritesRes, cartRes] = await Promise.all([
+      axios.get(`https://9f6b75bab8c0eb87.mokky.dev/books`, { params }),
+      axios.get(`https://9f6b75bab8c0eb87.mokky.dev/favorites`),
+      axios.get(`https://9f6b75bab8c0eb87.mokky.dev/cart`)
+    ])
 
-    const { data: favorites } = await axios.get(`https://9f6b75bab8c0eb87.mokky.dev/favorites`)
-    const { data: cart } = await axios.get(`https://9f6b75bab8c0eb87.mokky.dev/cart`)
+    const data = booksRes.data
+    const favorites = favoritesRes.data
+    const cart = cartRes.data
 
     items.value = data.map((obj) => ({
       ...obj,
-      isFavorite: favorites.map((f) => f.bookIdFav).includes(obj.id),
+      isFavorite: favorites && favorites.map((f) => f.bookIdFav).includes(obj.id),
       favoriteId: favorites ? obj.id : null,
-      isAdded: cart.map((f) => f.bookIdFav).includes(obj.id),
-      addedId: cart ? obj.id : null
+      isAdded: cart && cart.map((f) => f.bookIdAdded).includes(obj.id),
+      bookIdAdded: cart ? obj.id : null
     }))
   } catch (err) {
     console.log(err)

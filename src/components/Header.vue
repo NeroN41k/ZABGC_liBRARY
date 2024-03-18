@@ -1,9 +1,11 @@
 <script setup>
+import { defineProps, defineEmits } from 'vue';
+
 defineProps({
   totalCountCart: Number
-})
+});
 
-const emit = defineEmits(['openDrawer'])
+const emit = defineEmits(['openDrawer']);
 </script>
 
 <template>
@@ -15,8 +17,8 @@ const emit = defineEmits(['openDrawer'])
           <h2 class="font-bold text-xl">Библиотека ЗабГК</h2>
           <p class="text-slate-400">Все книги горного дела в одном месте</p>
         </div>
-      </div></router-link
-    >
+      </div>
+    </router-link>
 
     <ul class="flex items-center gap-6">
       <li
@@ -30,14 +32,14 @@ const emit = defineEmits(['openDrawer'])
         <li class="flex items-center gap-3 text-gray-500 hover:text-black cursor-pointer">
           <img src="/heart.svg" alt="Favorite" />
           <span>Закладки</span>
-        </li></router-link
-      >
+        </li>
+      </router-link>
       <router-link to="/profile">
         <li class="flex items-center gap-3 text-gray-500 hover:text-black cursor-pointer">
           <img src="/profile.svg" alt="Favorite" />
           <span>Профиль</span>
-        </li></router-link
-      >
+        </li>
+      </router-link>
     </ul>
   </header>
 </template>

@@ -6,7 +6,7 @@ import CardList from '../components/CardList.vue'
 
 const favorites = ref([])
 
-onMounted(async () => {
+const fetchData = async () => {
   try {
     const { data } = await axios.get(
       `https://9f6b75bab8c0eb87.mokky.dev/favorites?_relations=books`
@@ -15,7 +15,9 @@ onMounted(async () => {
   } catch (err) {
     console.log(err)
   }
-})
+};
+
+onMounted(fetchData)
 </script>
 
 <template>
