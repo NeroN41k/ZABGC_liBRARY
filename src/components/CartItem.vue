@@ -1,5 +1,5 @@
 <script setup>
-const emit = defineEmits(['addToCart'])
+import { inject } from 'vue'
 
 defineProps({
   id: Number,
@@ -7,6 +7,7 @@ defineProps({
   author: String,
   imageUrl: String
 })
+const { removeFromCart } = inject('drawer')
 </script>
 
 <template>
@@ -19,7 +20,7 @@ defineProps({
       <div class="flex justify-between mt-2">
         <p class="text-slate-400 flex-1">{{ author }}</p>
         <img
-          @click="emit('addToCart')"
+          @click="removeFromCart(item)"
           class="opacity-40 hover:opacity-100 cursor-pointer transition ml-1 w-8 h-8"
           src="/close.svg"
         />

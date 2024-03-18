@@ -23,17 +23,17 @@ const addToCart = async (item) => {
   try {
     if (!item.isAdded) {
       const obj = {
-        book_id: item.id
+        bookIdAdded: item.id
       }
       item.isAdded = true
       bookCartItems.value.push(item)
       const { data } = await axios.post(`https://9f6b75bab8c0eb87.mokky.dev/cart`, obj)
-      item.book_id = data.id
+      item.bookIdAdded = data.id
     } else {
       item.isAdded = false
       bookCartItems.value.splice(bookCartItems.value.indexOf(item), 1)
-      await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/cart/${item.book_id}`)
-      item.book_id = null
+      await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/cart/${item.bookIdAdded}`)
+      item.bookIdAdded = null
     }
   } catch (err) {
     console.log(err)
@@ -45,10 +45,16 @@ const addToCart = async (item) => {
 //bookCartItems.value.push(item)
 //}
 
-//const removeFromCart = (item) => {
-//item.isAdded = false
-//bookCartItems.value.splice(bookCartItems.value.indexOf(item), 1)
-//}
+const removeFromCart = async (item) => {
+  try {
+  item.isAdded = false
+  bookCartItems.value.splice(bookCartItems.value.indexOf(item), 1)
+  await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/cart/${item.bookIdAdded}`)
+  item.bookIdAdded = null
+  } catch (err) {
+    console.log(err)
+  }
+}
 
 watch(
   bookCartItems,
@@ -62,8 +68,8 @@ provide('drawer', {
   bookCartItems,
   openDrawer,
   closeDrawer,
-  addToCart
-  //removeFromCart
+  addToCart,
+  removeFromCart
 })
 /* Cart */
 </script>

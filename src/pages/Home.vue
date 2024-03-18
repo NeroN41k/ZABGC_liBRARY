@@ -91,9 +91,10 @@ const fetchItems = async () => {
 
     items.value = data.map((obj) => ({
       ...obj,
-      isFavorite: favorites.map((f) => f.book_id).includes(obj.id),
-      favoriteId: favorites.map((f) => f.book_id).includes(obj.id) ? obj.id : null,
-      isAdded: cart.map((f) => f.book_id).includes(obj.id)
+      isFavorite: favorites.map((f) => f.bookIdFav).includes(obj.id),
+      favoriteId: favorites ? obj.id : null,
+      isAdded: cart.map((f) => f.bookIdFav).includes(obj.id),
+      addedId: cart ? obj.id : null
     }))
   } catch (err) {
     console.log(err)
