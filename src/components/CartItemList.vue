@@ -2,7 +2,7 @@
 import { inject } from 'vue'
 import CartItem from './CartItem.vue'
 
-const { bookCartItems, addToCart } = inject('drawer')
+const { bookCartItems } = inject('drawer')
 </script>
 
 <template>
@@ -10,11 +10,7 @@ const { bookCartItems, addToCart } = inject('drawer')
     <CartItem
       v-for="item in bookCartItems"
       :key="item.id"
-      :id="item.id"
-      :title="item.title"
-      :author="item.author"
-      :image-url="item.imageUrl"
-      @on-click-remove="() => addToCart(item)"
+      :item="item"
     />
   </div>
 </template>
