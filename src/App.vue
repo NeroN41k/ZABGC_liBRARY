@@ -5,6 +5,7 @@ import Drawer from './components/Drawer.vue'
 import axios from 'axios'
 
 /* Cart */
+
 const bookCartItems = ref([])
 const drawerOpen = ref(false)
 
@@ -20,43 +21,51 @@ const closeDrawer = () => {
 
 const addToCart = async (item) => {
   try {
-    const apiUrl = 'https://9f6b75bab8c0eb87.mokky.dev/cart';
-    
-    if (!item.isAdded) {
-      const obj = {
-        book_id: item.id
-      };
-      
-      item.isAdded = true;
-      bookCartItems.value.push(item);
-
-      const { data } = await axios.post(apiUrl, obj);
-      item.book_id = data.id;
-    } else {
-      item.isAdded = false;
-      const index = bookCartItems.value.indexOf(item);
-      bookCartItems.value.splice(index, 1);
-
-      await axios.delete(`${apiUrl}/${item.book_id}`);
-      item.book_id = null;
+    const apiUrl = 'https://9f6b75bab8c0eb87.mokky.dev/cart'
+    const obj = {
+      book_id: item.id
     }
-  } catch (err) {
-    console.log(err);
-  }
-}
 
-const removeFromCart = async (item) => {
-  try {
-    item.isAdded = false
-    const index = bookCartItems.value.indexOf(item)
-    bookCartItems.value.splice(index, 1)
-    await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/cart/${item.book_id}`)
-    item.book_id = null
+    if (!item.isAdded) {
+      const { data } = await axios.post(apiUrl, obj)
+      item.isAdded = true
+      item.cartId = data.id
+      bookCartItems.value.push(item)
+    } else {
+      await axios.delete(`${apiUrl}/${obj.cartId}`)
+      item.isAdded = false
+      item.cartId = null
+      const index = bookCartItems.value.indexOf(item)
+      bookCartItems.value.splice(index, 1)
+    }
   } catch (err) {
     console.log(err)
   }
 }
 
+const removeFromCart = async (item) => {
+  try {
+    const apiUrl = 'https://9f6b75bab8c0eb87.mokky.dev/cart'
+    const obj = {
+      book_id: item.id
+    }
+    if (!item.isAdded) {
+      const { data } = await axios.post(apiUrl, obj)
+      item.isAdded = true
+      item.cartId = data.id
+      bookCartItems.value.push(item)
+      console.log(item.cartId)
+    } else {
+      await axios.delete(`${apiUrl}/${obj.id}`)
+      item.isAdded = false
+      item.cartId = null
+      const index = bookCartItems.value.indexOf(item)
+      bookCartItems.value.splice(index, 1)
+    }
+  } catch (err) {
+    console.log(err)
+  }
+}
 watch(
   bookCartItems,
   () => {

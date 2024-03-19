@@ -1,11 +1,11 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits } from 'vue'
 
 defineProps({
   totalCountCart: Number
-});
+})
 
-const emit = defineEmits(['openDrawer']);
+const emit = defineEmits(['openDrawer'])
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 <script setup>
 import { inject } from 'vue'
 
-const { removeFromCart } = inject('drawer')
+const { addToCart } = inject('drawer')
 
 const props = defineProps({
   id: Number,
@@ -21,7 +21,7 @@ const props = defineProps({
       <div class="flex justify-between mt-2">
         <p class="text-slate-400 flex-1">{{ props.author }}</p>
         <img
-          @click="removeFromCart(item)"
+          @click="addToCart(item)"
           class="opacity-40 hover:opacity-100 cursor-pointer transition ml-1 w-8 h-8"
           src="/close.svg"
         />

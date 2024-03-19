@@ -35,20 +35,20 @@ const addToFavorite = async (item) => {
   try {
     const obj = {
       book_id: item.id
-    };
-    item.isFavorite = !item.isFavorite;
-    
+    }
+    item.isFavorite = !item.isFavorite
+
     if (item.isFavorite) {
-      const { data } = await axios.post(`https://9f6b75bab8c0eb87.mokky.dev/favorites`, obj);
-      item.favoriteId = data.id;
+      const { data } = await axios.post(`https://9f6b75bab8c0eb87.mokky.dev/favorites`, obj)
+      item.favoriteId = data.id
     } else {
-      await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/favorites/${item.favoriteId}`);
-      item.favoriteId = null;
+      await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/favorites/${item.favoriteId}`)
+      item.favoriteId = null
     }
   } catch (err) {
-    console.log(err);
+    console.log(err)
   }
-};
+}
 
 const fetchFavorites = async () => {
   try {
@@ -95,10 +95,10 @@ const fetchItems = async () => {
 
     items.value = data.map((obj) => ({
       ...obj,
-      isFavorite: favorites && favorites.map((f) => f.bookIdFav).includes(obj.id),
+      isFavorite: favorites && favorites.map((f) => f.book_id).includes(obj.id),
       favoriteId: favorites ? obj.id : null,
-      isAdded: cart && cart.map((f) => f.bookIdAdded).includes(obj.id),
-      bookIdAdded: cart ? obj.id : null
+      isAdded: cart && cart.map((f) => f.book_id).includes(obj.id),
+      cartId: cart ? obj.id : null
     }))
   } catch (err) {
     console.log(err)
