@@ -52,7 +52,7 @@ const buttonDisabled = computed(() => isCreating.value || cartIsEmpty.value)
       <InfoBlock
         v-if="orderId"
         title="Книга оформлена!"
-        :description="`Ваш заказ №${orderId} подготавливается и в НИКОГДА вы сможете ее получить в библиотеке`"
+        :description="`Ваш заказ №${orderId} подготавливается и вы НИКОГДА не сможете ее получить в библиотеке`"
         image-url="/order-success-icon.png"
       />
     </div>
