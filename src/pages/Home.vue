@@ -73,6 +73,29 @@ const fetchFavorites = async () => {
   }
 }
 
+const fetchCart = async () => {
+  try {
+    const response = await axios.get(`https://9f6b75bab8c0eb87.mokky.dev/cart`)
+    const carts = response.data
+
+    items.value = items.value.map((item) => {
+      const cart = carts.find((cart) => cart.book_id === item.id)
+
+      if (!cart) {
+        return item
+      }
+
+      return {
+        ...item,
+        isAdded: true,
+        cartId: cart.id
+      }
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 const fetchItems = async () => {
   try {
     const params = {
@@ -110,6 +133,7 @@ onMounted(async () => {
   bookCartItems.value = localCart ? JSON.parse(localCart) : []
 
   await fetchItems()
+  await fetchCart()
   await fetchFavorites()
 
   items.value = items.value.map((item) => ({

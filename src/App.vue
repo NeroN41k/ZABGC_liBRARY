@@ -22,7 +22,7 @@ const closeDrawer = () => {
 const addToCart = async (item) => {
   // ! Тут проблемы с api, если я хочу удалить книгу с id 6 из карзины, то delete 'https://9f6b75bab8c0eb87.mokky.dev/cart/6' выдает 404
   try {
-    const apiUrl = 'https://9f6b75bab8c0eb87.mokky.dev/cart'
+    const apiUrl = `https://9f6b75bab8c0eb87.mokky.dev/cart`
     const obj = {
       book_id: item.id
     }
@@ -33,7 +33,7 @@ const addToCart = async (item) => {
       item.cartId = data.id
       bookCartItems.value.push(item)
     } else {
-      await axios.delete(`${apiUrl}/${obj.book_id}`)
+      await axios.delete(`${apiUrl}/${item.cartId}`)
       item.isAdded = false
       item.cartId = null
       const index = bookCartItems.value.indexOf(item)
