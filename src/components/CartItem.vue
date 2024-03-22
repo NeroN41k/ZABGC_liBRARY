@@ -1,7 +1,5 @@
 <script setup>
 import { inject } from 'vue'
-import { vueScrollbar } from 'vue-custom-scrollbar';
-import "vue-custom-scrollbar/dist/vueScrollbar.css"
 
 const { addToCart } = inject('drawer')
 
@@ -17,7 +15,6 @@ const props = defineProps({
 
 <template>
   <div class="flex border border-slate-200 p-4 rounded-xl gap-4">
-    <vueCustomScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHandle">
       <img class="w-16 h-16" :src="props.item.imageUrl" :alt="props.item.title" />
 
       <div class="flex flex-col flex-1">
@@ -32,6 +29,5 @@ const props = defineProps({
           />
         </div>
       </div>
-    </vueCustomScrollbar>
   </div>
 </template>

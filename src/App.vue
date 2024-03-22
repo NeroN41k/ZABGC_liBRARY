@@ -14,13 +14,11 @@ const totalCountCart = computed(() => bookCartItems.value.length)
 const openDrawer = () => {
   drawerOpen.value = true
 }
-
 const closeDrawer = () => {
   drawerOpen.value = false
 }
 
 const addToCart = async (item) => {
-  // ! Тут проблемы с api, если я хочу удалить книгу с id 6 из карзины, то delete 'https://9f6b75bab8c0eb87.mokky.dev/cart/6' выдает 404
   try {
     const apiUrl = `https://9f6b75bab8c0eb87.mokky.dev/cart`
     const obj = {
@@ -43,6 +41,7 @@ const addToCart = async (item) => {
     console.log(err)
   }
 }
+
 watch(
   bookCartItems,
   () => {

@@ -15,6 +15,8 @@ const { bookCartItems } = inject('drawer')
 const isCreating = ref(false)
 const orderId = ref(null)
 
+// .!. (.)(.)
+
 const createOrder = async () => {
   try {
     isCreating.value = true
@@ -24,7 +26,7 @@ const createOrder = async () => {
     })
     bookCartItems.value = []
     orderId.value = data.id
-    await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/cart`)
+    await deleteAll(data.books)
   } catch (err) {
     console.log(err)
     isCreating.value = false
@@ -33,13 +35,19 @@ const createOrder = async () => {
   }
 }
 
+const deleteAll = async (books) => {
+  for (const item of books) {
+    await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/cart/${item.cartId}`)
+  };
+}
+
 const cartIsEmpty = computed(() => bookCartItems.value.length === 0)
 const buttonDisabled = computed(() => isCreating.value || cartIsEmpty.value)
 </script>
 
 <template>
   <div class="fixed top-0 left-0 h-full w-full bg-black z-10 opacity-70"></div>
-  <div class="bg-white w-96 h-full fixed right-0 top-0 z-20 p-8">
+  <div class="bg-white w-96 h-full fixed right-0 top-0 z-20 p-8 overflow-y-auto no-scrollbar">
     <DrawerHeader />
 
     <div v-if="!totalCountCart || orderId" class="flex h-full items-center">

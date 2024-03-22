@@ -102,17 +102,16 @@ const fetchItems = async () => {
       sortBy: filters.sortBy
     }
 
-    if (filters.searchQuery) {
-      params.title = `*${filters.searchQuery}*`
-    }
-
     const [booksRes, favoritesRes, cartRes] = await Promise.all([
       axios.get(`https://9f6b75bab8c0eb87.mokky.dev/books`, { params }),
       axios.get(`https://9f6b75bab8c0eb87.mokky.dev/favorites`),
       axios.get(`https://9f6b75bab8c0eb87.mokky.dev/cart`)
     ])
 
-    const data = booksRes.data
+    const data = filters.searchQuery 
+      ? booksRes.data.filter(x => searchFilter(x, filters.searchQuery)) 
+      : booksRes.data
+      
     const favorites = favoritesRes.data
     const cart = cartRes.data
 
@@ -127,6 +126,11 @@ const fetchItems = async () => {
     console.log(err)
   }
 }
+
+const searchFilter = (book, query) => {
+  return book.title.toLowerCase().includes(query) || 
+        book.author.toLowerCase().includes(query);
+} 
 
 onMounted(async () => {
   const localCart = localStorage.getItem('bookCartItems')
