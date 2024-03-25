@@ -42,6 +42,25 @@ const addToCart = async (item) => {
   }
 }
 
+const addToFavorite = async (item) => {
+  try {
+    const obj = {
+      book_id: item.id
+    }
+    item.isFavorite = !item.isFavorite
+
+    if (item.isFavorite) {
+      const { data } = await axios.post(`https://9f6b75bab8c0eb87.mokky.dev/favorites`, obj)
+      item.favoriteId = data.id
+    } else {
+      await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/favorites/${item.favoriteId}`)
+      item.favoriteId = null
+    }
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 watch(
   bookCartItems,
   () => {
@@ -54,7 +73,8 @@ provide('drawer', {
   bookCartItems,
   openDrawer,
   closeDrawer,
-  addToCart
+  addToCart,
+  addToFavorite
 })
 /* Cart */
 </script>

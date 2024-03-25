@@ -14,7 +14,7 @@ defineProps({
 <template>
   <div>
     <div
-      class="relative bg-white border border-slate-100 rounded-xl p-8 cursor-pointer transition hover:-translate-y-2 hover:shadow-xl"
+      class="relative bg-white border border-slate-200 rounded-xl p-8 cursor-pointer transition hover:-translate-y-2 hover:shadow-xl"
     >
       <img
         v-if="onClickFavorite"

@@ -5,7 +5,7 @@ import debounce from 'lodash.debounce'
 
 import CardList from '../components/CardList.vue'
 
-const { bookCartItems, addToCart } = inject('drawer')
+const { bookCartItems, addToCart, addToFavorite } = inject('drawer')
 
 const items = ref([])
 
@@ -14,15 +14,6 @@ const filters = reactive({
   searchQuery: ''
 })
 
-//const onClickAddPlus = (item) => {
-//if (!item.isAdded) {
-// addToCart(item)
-// } else {
-// removeFromCart(item)
-//}
-//console.log(bookCartItems)
-//}
-
 const onChangeSelect = (event) => {
   filters.sortBy = event.target.value
 }
@@ -30,25 +21,6 @@ const onChangeSelect = (event) => {
 const onChangeSearchInput = debounce((event) => {
   filters.searchQuery = event.target.value
 }, 350)
-
-const addToFavorite = async (item) => {
-  try {
-    const obj = {
-      book_id: item.id
-    }
-    item.isFavorite = !item.isFavorite
-
-    if (item.isFavorite) {
-      const { data } = await axios.post(`https://9f6b75bab8c0eb87.mokky.dev/favorites`, obj)
-      item.favoriteId = data.id
-    } else {
-      await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/favorites/${item.favoriteId}`)
-      item.favoriteId = null
-    }
-  } catch (err) {
-    console.log(err)
-  }
-}
 
 const fetchFavorites = async () => {
   try {
