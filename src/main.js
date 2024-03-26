@@ -4,6 +4,8 @@ import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import { autoAnimatePlugin } from '@formkit/auto-animate/vue'
 import App from './App.vue'
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
 
 import Home from './pages/Home.vue'
 import Favorites from './pages/Favorites.vue'
@@ -22,4 +24,13 @@ const router = createRouter({
   routes
 })
 
-app.use(router).use(autoAnimatePlugin).mount('#app')
+const options = {
+  maxToasts: 3,
+  position: "top-left",
+  timeout: 3000,
+  pauseOnHover: false,
+  hideProgressBar: true,
+  closeButton: false
+}
+
+app.use(router).use(autoAnimatePlugin).use(Toast, options).mount('#app')

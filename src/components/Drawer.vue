@@ -6,6 +6,10 @@ import DrawerHeader from './DrawerHeader.vue'
 import CartItemList from './CartItemList.vue'
 import InfoBlock from './InfoBlock.vue'
 
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
+
 const props = defineProps({
   totalCountCart: Number
 })
@@ -27,9 +31,11 @@ const createOrder = async () => {
     bookCartItems.value = []
     orderId.value = data.id
     await deleteAll(data.books)
+    toast("Заказ успешно создан!")
   } catch (err) {
     console.log(err)
     isCreating.value = false
+    toast.error("Ошибка.")
   } finally {
     isCreating.value = false
   }

@@ -3,8 +3,10 @@ import { ref, provide, watch, computed } from 'vue'
 import Header from './components/Header.vue'
 import Drawer from './components/Drawer.vue'
 import axios from 'axios'
+import { useToast } from "vue-toastification";
 
 /* Cart */
+const toast = useToast();
 
 const bookCartItems = ref([])
 const drawerOpen = ref(false)
@@ -30,15 +32,18 @@ const addToCart = async (item) => {
       item.isAdded = true
       item.cartId = data.id
       bookCartItems.value.push(item)
+      toast.success("Книга успешно добавлена в корзину!")
     } else {
       await axios.delete(`${apiUrl}/${item.cartId}`)
       item.isAdded = false
       item.cartId = null
       const index = bookCartItems.value.indexOf(item)
       bookCartItems.value.splice(index, 1)
+      toast.success("Книга успешно удалена из корзины!")
     }
   } catch (err) {
     console.log(err)
+    toast.error("Ошибка.")
   }
 }
 
@@ -52,12 +57,15 @@ const addToFavorite = async (item) => {
     if (item.isFavorite) {
       const { data } = await axios.post(`https://9f6b75bab8c0eb87.mokky.dev/favorites`, obj)
       item.favoriteId = data.id
+      toast.success("Книга успешно добавлена в закладки!")
     } else {
       await axios.delete(`https://9f6b75bab8c0eb87.mokky.dev/favorites/${item.favoriteId}`)
       item.favoriteId = null
+      toast.success("Книга успешно удалена из закладок!")
     }
   } catch (err) {
     console.log(err)
+    toast.error("Ошибка.")
   }
 }
 
