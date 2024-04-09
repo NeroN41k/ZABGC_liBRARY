@@ -1,11 +1,12 @@
 <script setup>
-import { onMounted, ref, inject, reactive, watch } from 'vue'
 import axios from 'axios'
+import { inject, onMounted, ref, reactive, watch } from 'vue'
 import debounce from 'lodash.debounce'
 
 import CardList from '../components/CardList.vue'
 
 const { bookCartItems, addToCart, addToFavorite } = inject('drawer')
+//const emit = defineEmits(['fetchItems', 'fetchCart', 'fetchFavorites'])
 
 const items = ref([])
 
@@ -13,10 +14,6 @@ const filters = reactive({
   sortBy: 'title',
   searchQuery: ''
 })
-
-const searchFilter = (book, query) => {
-  return book.title.toLowerCase().includes(query) || book.author.toLowerCase().includes(query)
-}
 
 const onChangeSelect = (event) => {
   filters.sortBy = event.target.value
@@ -49,57 +46,74 @@ const fetchCart = async () => {
   }
 }
 
-const fetchFavorite = async () => {
+const fetchFavorites = async () => {
+  try {
+    const response = await axios.get(`https://9f6b75bab8c0eb87.mokky.dev/favorites`)
+    const favorites = response.data
+
+    items.value = items.value.map((item) => {
+      const favorite = favorites.find((favorite) => favorite.book_id === item.id)
+
+      if (!favorite) {
+        return item
+      }
+
+      return {
+        ...item,
+        isFavorite: true,
+        favoriteId: favorite.id
+      }
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const fetchData = async () => {
   try {
     const params = {
       sortBy: filters.sortBy
     }
 
-    const [Favorites, favoritesRes, cartRes] = await Promise.all([
-      axios.get(`https://9f6b75bab8c0eb87.mokky.dev/books`),
-      axios.get(`https://9f6b75bab8c0eb87.mokky.dev/favorites?_relations=books`, { params }),
-      axios.get(`https://9f6b75bab8c0eb87.mokky.dev/cart`)
-    ])
+    const [booksRes, favoritesRes, cartRes] = await Promise.all([ 
+    axios.get(`https://9f6b75bab8c0eb87.mokky.dev/favorites?_relations=books`, { params }),
+    axios.get(`https://9f6b75bab8c0eb87.mokky.dev/books`),
+    axios.get(`https://9f6b75bab8c0eb87.mokky.dev/cart`)
+  ])
 
-    const data = filters.searchQuery
-      ? Favorites.data.filter((x) => searchFilter(x, filters.searchQuery))
-      : Favorites.data
+  const data = filters.searchQuery
+      ? booksRes.data.filter((x) => searchFilter(x, filters.searchQuery))
+      : booksRes.data
 
     const favorites = favoritesRes.data
     const cart = cartRes.data
 
-    items.value = data.map((obj) => ({
-      ...obj,
-      isFavorite: favorites && favorites.map((f) => f.book_id).includes(obj.id),
-      favoriteId: favorites ? obj.id : null,
-      isAdded: cart && cart.map((f) => f.book_id).includes(obj.id),
-      cartId: cart ? obj.id : null
-    }))
+    items.value = data.map((obj) => obj.book)
   } catch (err) {
     console.log(err)
   }
 }
 
+const searchFilter = (book, query) => {
+  return book.title.toLowerCase().includes(query) || book.author.toLowerCase().includes(query)
+}
+
+onMounted(fetchData)
+
 onMounted(async () => {
   const localCart = localStorage.getItem('bookCartItems')
   bookCartItems.value = localCart ? JSON.parse(localCart) : []
 
-  await fetchFavorite()
+  await fetchData()
   await fetchCart()
+  await fetchFavorites()
 
   items.value = items.value.map((item) => ({
     ...item,
     isAdded: bookCartItems.value.some((cartBook) => cartBook.id === item.id)
   }))
 })
-
-watch(bookCartItems, () => {
-  items.value = items.value.map((item) => ({
-    ...item,
-    isAdded: false
-  }))
-})
-watch(filters, fetchFavorite)
+watch(filters, fetchData)
 </script>
 
 <template>
@@ -123,11 +137,5 @@ watch(filters, fetchFavorite)
     </div>
   </div>
 
-  <div class="mt-10">
-    <CardList
-      :items="items"
-      @add-to-favorite="addToFavorite"
-      @add-to-cart="addToCart"
-    />
-  </div>
+  <CardList :items="items" @add-to-favorite="addToFavorite" @add-to-cart="addToCart" />
 </template>

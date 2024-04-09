@@ -1,6 +1,6 @@
 <script setup>
 import axios from 'axios'
-import { inject, reactive, watch, ref, onMounted } from 'vue'
+import { inject, reactive, watch, ref, onMounted, provide } from 'vue'
 import debounce from 'lodash.debounce'
 
 import CardList from '../components/CardList.vue'
@@ -80,10 +80,10 @@ const fetchItems = async () => {
       axios.get(`https://9f6b75bab8c0eb87.mokky.dev/cart`)
     ])
 
-    const data = filters.searchQuery 
-      ? booksRes.data.filter(x => searchFilter(x, filters.searchQuery)) 
+    const data = filters.searchQuery
+      ? booksRes.data.filter((x) => searchFilter(x, filters.searchQuery))
       : booksRes.data
-      
+
     const favorites = favoritesRes.data
     const cart = cartRes.data
 
@@ -100,9 +100,8 @@ const fetchItems = async () => {
 }
 
 const searchFilter = (book, query) => {
-  return book.title.toLowerCase().includes(query) || 
-        book.author.toLowerCase().includes(query);
-} 
+  return book.title.toLowerCase().includes(query) || book.author.toLowerCase().includes(query)
+}
 
 onMounted(async () => {
   const localCart = localStorage.getItem('bookCartItems')
@@ -125,6 +124,12 @@ watch(bookCartItems, () => {
   }))
 })
 watch(filters, fetchItems)
+
+provide('aboba', {
+  fetchItems,
+  fetchFavorites,
+  fetchCart
+})
 </script>
 
 <template>

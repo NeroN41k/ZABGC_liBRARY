@@ -4,6 +4,7 @@ import Header from './components/Header.vue'
 import Drawer from './components/Drawer.vue'
 import axios from 'axios'
 import { useToast } from "vue-toastification";
+import debounce from 'lodash.debounce'
 
 /* Cart */
 const toast = useToast();
@@ -20,7 +21,7 @@ const closeDrawer = () => {
   drawerOpen.value = false
 }
 
-const addToCart = async (item) => {
+const addToCart = debounce(async (item) => {
   try {
     const apiUrl = `https://9f6b75bab8c0eb87.mokky.dev/cart`
     const obj = {
@@ -45,9 +46,9 @@ const addToCart = async (item) => {
     console.log(err)
     toast.error("Ошибка.")
   }
-}
+}, 250)
 
-const addToFavorite = async (item) => {
+const addToFavorite = debounce(async (item) => {
   try {
     const obj = {
       book_id: item.id
@@ -67,7 +68,7 @@ const addToFavorite = async (item) => {
     console.log(err)
     toast.error("Ошибка.")
   }
-}
+}, 250)
 
 watch(
   bookCartItems,
